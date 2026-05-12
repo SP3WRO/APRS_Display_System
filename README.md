@@ -1,8 +1,6 @@
 
 # APRS_Display_System
 
-# APRS_Display_System
-
 To zaawansowany, wielofunkcyjny wyświetlacz ramek APRS (Automatic Packet Reporting System) oparty na mikrokontrolerze ESP32, który służy do odbierania, dekodowania i wyświetlania ramek radiowych (lub internetowych) na energooszczędnym ekranie e-ink (e-papier).
 
 ## **Cztery tryby pracy (Złącza danych):**
