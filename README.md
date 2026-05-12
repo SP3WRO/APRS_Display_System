@@ -3,6 +3,8 @@
 
 To zaawansowany, wielofunkcyjny wyświetlacz ramek APRS (Automatic Packet Reporting System) oparty na mikrokontrolerze ESP32, który służy do odbierania, dekodowania i wyświetlania ramek radiowych (lub internetowych) na energooszczędnym ekranie e-ink (e-papier).
 
+## Opis programowania
+
 ## **Cztery tryby pracy (Złącza danych):**
 
 - VP-Digi UART (Sprzętowy TNC): Program odbiera dane bezpośrednio przez fizyczne piny RX/TX z zewnętrznego modemu (np. VP-Digi) używając protokołu KISS.
