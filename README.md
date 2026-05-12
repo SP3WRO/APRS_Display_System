@@ -21,7 +21,7 @@ To zaawansowany, wielofunkcyjny wyświetlacz ramek APRS (Automatic Packet Report
   
 ## **Obsługiwane formaty:** 
 
-* Standardowe ramki pozycyjne, format skompresowany Mic-E, Base91, dane telemetryczne, pogodowe (WX) oraz informacje o stacji (PHG).
+* Standardowe ramki pozycyjne, format skompresowany Mic-E, Base91, pogodowe (WX) oraz informacje o stacji (PHG).
   
 ## **Identyfikacja Radia:**
   
