@@ -20,11 +20,13 @@ To zaawansowany, wielofunkcyjny wyświetlacz ramek APRS (Automatic Packet Report
 **Obsługiwane formaty:** 
 
 * Standardowe ramki pozycyjne, format skompresowany Mic-E, Base91, dane telemetryczne, pogodowe (WX) oraz informacje o stacji (PHG).
+  
 **Identyfikacja Radia:**
   
 * System potrafi rozpoznać, z jakiego modelu radia został wysłany pakiet (np. Yaesu FTM-400, FTM-300, Kenwood TH-D74, aplikacja APRSdroid itp.) na podstawie komentarza lub znaków docelowych (TOCALL).
 
 **Matematyka nawigacyjna:**
+
 * Program na bieżąco oblicza dystans (w kilometrach) oraz azymut (kierunek, np. NW, SE) z Twojej stałej lokalizacji do odebranego obiektu.
 
 **Logika Ekranu i Wyświetlanie (E-Ink 4.2"):**
