@@ -15,13 +15,13 @@ To zaawansowany, wielofunkcyjny wyświetlacz ramek APRS (Automatic Packet Report
 * BT Auto-Fallback (Awaryjny Punkt Dostępu): Jeśli ESP32 w trybie Bluetooth nie zdoła połączyć się z modułem HC-05 trzy razy z rzędu (np. wyłączone radio, awaria zasilania), program automatycznie wstrzymuje próby, resetuje się w bezpieczny sposób i uruchamia własną sieć WiFi (AP: APRS_DISPLAY_SETUP, IP: 192.168.4.1). Dzięki temu nigdy nie tracisz dostępu do panelu konfiguracyjnego w razie awarii modemu.
 
 **Dekodowanie i Przetwarzanie Danych (Parser):**
-*Program posiada potężny wewnętrzny dekoder. Potrafi analizować czysty protokół AX.25 zawinięty w ramki KISS.
+* Program posiada potężny wewnętrzny dekoder. Potrafi analizować czysty protokół AX.25 zawinięty w ramki KISS.
 **Obsługiwane formaty:** 
-*Standardowe ramki pozycyjne, format skompresowany Mic-E, Base91, dane telemetryczne, pogodowe (WX) oraz informacje o stacji (PHG).
+* Standardowe ramki pozycyjne, format skompresowany Mic-E, Base91, dane telemetryczne, pogodowe (WX) oraz informacje o stacji (PHG).
 **Identyfikacja Radia:** 
-*System potrafi rozpoznać, z jakiego modelu radia został wysłany pakiet (np. Yaesu FTM-400, FTM-300, Kenwood TH-D74, aplikacja APRSdroid itp.) na podstawie komentarza lub znaków docelowych (TOCALL).
+* System potrafi rozpoznać, z jakiego modelu radia został wysłany pakiet (np. Yaesu FTM-400, FTM-300, Kenwood TH-D74, aplikacja APRSdroid itp.) na podstawie komentarza lub znaków docelowych (TOCALL).
 **Matematyka nawigacyjna:** 
-*Program na bieżąco oblicza dystans (w kilometrach) oraz azymut (kierunek, np. NW, SE) z Twojej stałej lokalizacji do odebranego obiektu.
+* Program na bieżąco oblicza dystans (w kilometrach) oraz azymut (kierunek, np. NW, SE) z Twojej stałej lokalizacji do odebranego obiektu.
 
 **Logika Ekranu i Wyświetlanie (E-Ink 4.2"):**
 * **Tryb Klasyczny:** 
@@ -35,6 +35,7 @@ Bardziej kompaktowy układ wyświetlający do 6 ostatnich stacji jedna pod drug�
 * **Filtr Dystansu:** Możliwość odrzucenia stacji znajdujących się dalej niż zadany limit kilometrów.
 * **Wbudowany Serwer WWW:** Kompletny interfejs graficzny dostępny z poziomu przeglądarki. Umożliwia zmianę wszystkich opcji, wpisywanie haseł, zmianę trybu wyświetlania i zawiera podgląd na żywo tzw. "Terminala", na który spływają surowe dane i logi pracy urządzenia.
 * **Beacon:** Opcja automatycznego wysyłania własnej pozycji (ramki) w eter (przez UART/BT/TCP) lub do sieci (APRS-IS) w określonym interwale czasu.
+* **Ikony:** Urządzenie rozpoznaje większość najczęściej używanych ikon i wyświetla je w prawym górnym rogu ekranu.
 
 **Schemat połączeń sprzętowych (Pinout)**
 Ekran E-Ink wykorzystuje magistralę SPI, natomiast TNC wymaga sprzętowego portu szeregowego (UART2). Poniżej znajduje się dokładna tabela, jak należy połączyć przewody między modułami a płytką ESP32 (WROOM-32 / DevKit) i wyświetlaczem E-Ink (np. Waveshare / GxEPD2 4.2") Zwróć uwagę na to, że układ ESP32 ma przypisane sprzętowe piny dla SPI (SCK i MOSI), a pozostałe piny sterujące zdefiniowane są ręcznie w kodzie.
