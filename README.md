@@ -11,8 +11,10 @@ Then compile the program and upload it to the device. After a moment, the welcom
 
 - VP-Digi UART (Hardware TNC): The program receives data directly via the physical RX/TX pins from an external modem (e.g., VP-Digi) using the KISS protocol.
 
-* KISS TCP: The ESP32 connects via Wi-Fi as a client to an external KISS TCP server (e.g., DireWolf running on a Raspberry Pi). * APRS-IS: The ESP32 connects to the global APRS-IS network (e.g., poland.aprs2.net) via WiFi, authenticates with your username and password (passcode), and collects traffic from the surrounding area.
+* KISS TCP: The ESP32 connects via Wi-Fi as a client to an external KISS TCP server (e.g., DireWolf running on a Raspberry Pi).
+* APRS-IS: The ESP32 connects to the global APRS-IS network (e.g., poland.aprs2.net) via WiFi, authenticates with your username and password (passcode), and collects traffic from the surrounding area.
 * Bluetooth SPP (HC-05 Client): The ESP32 uses its built-in Bluetooth module to wirelessly connect to an external modem equipped with an HC-05 module (e.g., a mobile tracker or radio).
+
 
 ## **Mechanisms:**
 * BT Auto-Fallback (Failover Access Point): If the ESP32 fails to connect to the HC-05 module three times in a row in Bluetooth mode (e.g., radio off, power failure), the program automatically stops attempts, safely resets, and starts its own WiFi network (AP: APRS_DISPLAY_SETUP, IP: 192.168.4.1). This ensures you never lose access to the configuration panel in the event of a modem failure.
