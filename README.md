@@ -3,7 +3,10 @@
 This is an advanced, multi-functional APRS (Automatic Packet Reporting System) frame display based on the ESP32 microcontroller. It is used to receive, decode, and display radio (or internet) frames on a low-power e-ink (WeAct 4,2'' BW) screen.
 
 ## Programming Description
-
+* The SP3WRO_APRS_DISPLAY.ino and icons.h files should be located together in one folder.
+Run the .ino file in the Arduino IDE. In the tools menu, select the HUGE APP (3MB No OTA/1MB SPIFFS) option, as shown in the image.
+Then compile the program and upload it to the device. After a moment, the welcome screen will launch.
+![Welcome display](photos/6.png)
 ## **Four Operating Modes (Data Interfaces):**
 
 - VP-Digi UART (Hardware TNC): The program receives data directly via the physical RX/TX pins from an external modem (e.g., VP-Digi) using the KISS protocol.
