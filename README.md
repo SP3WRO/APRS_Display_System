@@ -1,5 +1,5 @@
 # APRS_Display_System
-
+![Welcome display](photos/1.jpg)
 This is an advanced, multi-functional APRS (Automatic Packet Reporting System) frame display based on the ESP32 microcontroller. It is used to receive, decode, and display radio (or internet) frames on a low-power e-ink (e-paper) screen.
 
 ## Programming Description
