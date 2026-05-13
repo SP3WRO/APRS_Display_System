@@ -78,4 +78,6 @@ GND (Masa)                   |       GND      | Wspólna masa między układami 
 * **Uwaga! W trakcie używania trybu Bluetooth wyłączone jest WiFi!**
 
 
-
+## Info
+* Software: Mateusz SP3WRO czysty61@gmail.com
+* Case: Patryk patrykst1999@o2.pl
