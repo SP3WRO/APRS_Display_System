@@ -75,4 +75,5 @@ GND (Ground) | GND | Common ground between the chips is absolutely critical!
 * You connect the HC-05 to your mobile modem/radio via hardware using RX/TX cables (e.g., to the DATA port). * The ESP32 board communicates fully wirelessly with this HC-05 via Bluetooth and the MAC address entered in the web configuration panel.
 * **Note: WiFi is disabled when using Bluetooth mode!**
 
-Beta version, source code will be available soon!
+* Software: Mateusz SP3WRO czysty61@gmail.com
+* Case: Patryk patrykst1999@o2.pl
