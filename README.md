@@ -1,6 +1,6 @@
 # APRS_Display_System
 ![Welcome display](photos/1.jpg)
-This is an advanced, multi-functional APRS (Automatic Packet Reporting System) frame display based on the ESP32 microcontroller. It is used to receive, decode, and display radio (or internet) frames on a low-power e-ink (WeAct 4,2'' BW) screen.
+This is an advanced, multi-functional APRS (Automatic Packet Reporting System) frame display based on the ESP32-WROOM microcontroller. It is used to receive, decode, and display radio (or internet) frames on a low-power e-ink (WeAct 4,2'' BW) screen.
 
 ## Programming Description
 * The SP3WRO_APRS_DISPLAY.ino and icons.h files should be located together in one folder.
