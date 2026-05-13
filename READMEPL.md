@@ -1,7 +1,7 @@
 
 # APRS_Display_System
 ![Welcome display](photos/1.jpg)
-To zaawansowany, wielofunkcyjny wyświetlacz ramek APRS (Automatic Packet Reporting System) oparty na mikrokontrolerze ESP32, który służy do odbierania, dekodowania i wyświetlania ramek radiowych (lub internetowych) na energooszczędnym ekranie e-ink (WeAct 4,2" BW).
+To zaawansowany, wielofunkcyjny wyświetlacz ramek APRS (Automatic Packet Reporting System) oparty na mikrokontrolerze ESP32-WROOM, który służy do odbierania, dekodowania i wyświetlania ramek radiowych (lub internetowych) na energooszczędnym ekranie e-ink (WeAct 4,2" BW).
 
 ## Opis programowania
 Pliki SP3WRO_APRS_DISPLAY.ino oraz icons.h powinny znajdować się razem w jednym folderze.
