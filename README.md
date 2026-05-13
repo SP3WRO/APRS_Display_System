@@ -51,16 +51,15 @@ The E-Ink screen uses an SPI bus, while the TNC requires a hardware serial port 
 ||||
 |--|--|--|
 **Pin on E-Ink module** | **Pin on ESP32** | **Description (Function)** |
-|VCC (Power Supply) | 3.3V | Power supply for the display logic (Never 5V!)|
-|GND (Ground) | GND | Common ground|
-|DIN (MOSI) | GPIO 23 | Sending data from ESP to the display (Hardware SPI)|
-|CLK (SCK) | GPIO 18 | Bus clock (Hardware SPI)|
-|CS (Chip Select) | GPIO 5 | Defined in code as EPD_CS|
-|DC (Data/Command) | GPIO 17 | Defined in code as EPD_DC|
-|RST (Reset) | GPIO 16 | Defined in code as EPD_RST|
-|BUSY (Busy) | GPIO 4 | Defined in code as EPD_BUSY|
+|VCC | 3.3V | Power supply for the display logic (Never 5V!)|
+|GND | GND | Common ground|
+|SDA | GPIO 23 | Sending data from ESP to the display (Hardware SPI)|
+|SCL | GPIO 18 | Bus clock (Hardware SPI)|
+|CS  | GPIO 5 | Defined in code as EPD_CS|
+|DC | GPIO 17 | Defined in code as EPD_DC|
+|RES | GPIO 16 | Defined in code as EPD_RST|
+|BUSY | GPIO 4 | Defined in code as EPD_BUSY|
 
-(Note: The MISO pin is not needed, as the e-ink screen only receives drawing instructions.)
 
 ## Hardware Modem (VP-Digi / TNC) ↔ ESP32 (UART Mode)
 The connection uses the hardware serial port on the ESP32. It requires a crossover connection (TX to RX).
