@@ -53,16 +53,15 @@ Ekran E-Ink wykorzystuje magistralę SPI, natomiast TNC wymaga sprzętowego port
 ||||
 |--|--|--|
 **Pin na module E-Ink** | **Pin na ESP32** | **Opis (Funkcja)** |
-|VCC (Zasilanie)     | 3.3V         | Zasilanie układu logiki ekranu (Nigdy 5V!)|
-|GND (Masa)          | GND          | Wspólna masa|
-|DIN (MOSI)          | GPIO 23      | Przesyłanie danych z ESP do ekranu (Hardware SPI)|
-|CLK (SCK)           | GPIO 18      | Zegar taktujący magistrali (Hardware SPI)|
-|CS (Chip Select)    | GPIO 5       | Zdefiniowany w kodzie jako EPD_CS|
-|DC (Data/Command)   | GPIO 17      | Zdefiniowany w kodzie jako EPD_DC|
-|RST (Reset)         | GPIO 16      | Zdefiniowany w kodzie jako EPD_RST|
-|BUSY (Zajętość)     | GPIO 4       | Zdefiniowany w kodzie jako EPD_BUSY|
+|VCC   | 3.3V         | Zasilanie układu logiki ekranu (Nigdy 5V!)|
+|GND       | GND      | Wspólna masa|
+|SDA  | GPIO 23       | Przesyłanie danych z ESP do ekranu (Hardware SPI)|
+|SCL           | GPIO 18      | Zegar taktujący magistrali (Hardware SPI)|
+|CS     | GPIO 5       | Zdefiniowany w kodzie jako EPD_CS|
+|DC    | GPIO 17      | Zdefiniowany w kodzie jako EPD_DC|
+|RST          | GPIO 16      | Zdefiniowany w kodzie jako EPD_RST|
+|BUSY    | GPIO 4       | Zdefiniowany w kodzie jako EPD_BUSY|
 
-(Uwaga: Pin MISO nie jest potrzebny, ponieważ ekran e-ink tylko odbiera instrukcje rysowania)
 
 ## Sprzętowy Modem (VP-Digi / TNC) ↔ ESP32 (Tryb UART)
 Połączenie wykorzystuje sprzętowy port Serial na ESP32. Wymaga połączenia na krzyż (TX do RX).
@@ -78,6 +77,5 @@ GND (Masa)                   |       GND      | Wspólna masa między układami 
 * Płytka ESP32 komunikuje się z tym HC-05 w pełni bezprzewodowo z Bluetooth i adresu MAC wpisanego w panelu konfiguracyjnym WWW.
 * **Uwaga! W trakcie używania trybu Bluetooth wyłączone jest WiFi!**
 
-Wersja beta, kod źródłowy udostępniony będzie wkrótce!
 
 
