@@ -77,6 +77,9 @@ GND (Masa)                   |       GND      | Wspólna masa między układami 
 * Płytka ESP32 komunikuje się z tym HC-05 w pełni bezprzewodowo z Bluetooth i adresu MAC wpisanego w panelu konfiguracyjnym WWW.
 * **Uwaga! W trakcie używania trybu Bluetooth wyłączone jest WiFi!**
 
+## Planowane funkcjonalności:
+* Obsługa przycisków (cofanie ramek, przewijanie listy)
+* Odczyt wiadomości tekstowych
 
 ## Info
 * Software: Mateusz SP3WRO czysty61@gmail.com
