@@ -1,6 +1,7 @@
 // Wspólne typy i stałe programu (używane przez wszystkie zakładki .ino)
 #pragma once
 #include <Arduino.h>
+#include <WiFi.h>
 #include "aprs_parser.h"
 
 #define FW_VERSION "2.0"
@@ -97,12 +98,16 @@ const unsigned long MSG_RETRY_MS = 30000UL;
 const int MSG_MAX_TRIES = 5;
 
 #define AP_SSID "APRS_DISPLAY_SETUP"
+#define WIFI_TX_POWER WIFI_POWER_13dBm   // moc nadawania WiFi (mniejsze szczyty prądu)
 
 // --- DEKLARACJE FUNKCJI Z ZAKŁADEK ---
 // Jawne, bo automatyczne prototypy Arduino gubią się na długich stringach HTML.
 void addToTerminal(String log);
+void wifiModeLowPeak(wifi_mode_t mode);
 bool isBtMode();
 String effectiveIsCall();
+String effectiveIsPass();
+void loadConfig();
 bool getLocalTimeNow(struct tm &t);
 // display.ino
 void updateDisplay();
@@ -126,3 +131,5 @@ int countHeardWithin(unsigned long windowMs);
 String formatAge(unsigned long ms);
 // web.ino
 void setupWebEndpoints();
+void applyLiveSettings(const Config &old, const String &oldFilter);
+void handleDisplayMode();

@@ -234,7 +234,7 @@ void handleWifi(unsigned long now) {
     if (now - lastWifiRetry > WIFI_RETRY_MS && (!apActive || WiFi.softAPgetStationNum() == 0)) {
       lastWifiRetry = now;
       addToTerminal("WiFi: ponawiam laczenie z " + appConfig.wifiSSID);
-      if (!(WiFi.getMode() & WIFI_STA)) WiFi.mode(apActive ? WIFI_AP_STA : WIFI_STA);
+      if (!(WiFi.getMode() & WIFI_STA)) wifiModeLowPeak(apActive ? WIFI_AP_STA : WIFI_STA);
       WiFi.begin(appConfig.wifiSSID.c_str(), appConfig.wifiPass.c_str());
     }
   } else if (apActive) {
@@ -245,7 +245,7 @@ void handleWifi(unsigned long now) {
     }
     if (now - wifiOkSince > AP_SHUTDOWN_MS && WiFi.softAPgetStationNum() == 0) {
       WiFi.softAPdisconnect(true);
-      WiFi.mode(WIFI_STA);
+      wifiModeLowPeak(WIFI_STA);
       apActive = false;
       addToTerminal("AP wylaczony - dziala siec " + appConfig.wifiSSID);
       if (lastPacket.sourceCall.length() == 0) {

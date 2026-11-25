@@ -186,8 +186,18 @@ void loadConfig() {
   if (appConfig.isPass == "12345") appConfig.isPass = "";
 }
 
+// Start radia z mniejszymi szczytami prądu. Przy domyślnych 19,5 dBm nadajnik pobiera
+// chwilowo kilkaset mA i stabilizator płytki DevKit potrafi nie nadążyć (brownout przy
+// starcie, niezależnie od zasilacza). 13 dBm w zupełności wystarcza w zasięgu domowej sieci.
+// persistent(false): bez zapisu danych WiFi do flasha w chwili startu radia.
+void wifiModeLowPeak(wifi_mode_t mode) {
+  WiFi.persistent(false);
+  WiFi.mode(mode);
+  WiFi.setTxPower(WIFI_TX_POWER);
+}
+
 void startAccessPoint() {
-  WiFi.mode(appConfig.wifiSSID.length() > 0 && !btFallbackTriggered ? WIFI_AP_STA : WIFI_AP);
+  wifiModeLowPeak(appConfig.wifiSSID.length() > 0 && !btFallbackTriggered ? WIFI_AP_STA : WIFI_AP);
   if (appConfig.apPass.length() >= 8) WiFi.softAP(AP_SSID, appConfig.apPass.c_str());
   else WiFi.softAP(AP_SSID);
   apActive = true;
@@ -228,6 +238,9 @@ bool resetWasError() {
 }
 
 void setup() {
+  // 160 MHz zamiast 240 MHz - kilkadziesiąt mA mniej, a moc w zupełności wystarcza
+  // (dekodowanie ramek i e-papier); dodatkowy zapas przy szczytach prądu radia
+  setCpuFrequencyMhz(160);
   Serial.begin(115200);
   display.init(0, true, 2, false);
 
@@ -294,7 +307,7 @@ void setup() {
     } else {
       if (appConfig.wifiSSID.length() > 0) {
         setBootProgress(15, "Łączenie z WiFi: " + appConfig.wifiSSID);
-        WiFi.mode(WIFI_STA);
+        wifiModeLowPeak(WIFI_STA);
         WiFi.setAutoReconnect(true);
         WiFi.begin(appConfig.wifiSSID.c_str(), appConfig.wifiPass.c_str());
         // Bez odświeżania e-papieru w trakcie łączenia: szczyt poboru prądu radia razem

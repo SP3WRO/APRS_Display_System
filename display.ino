@@ -268,16 +268,23 @@ void drawListScreen() {
   u8g2Fonts.setForegroundColor(GxEPD_BLACK);
 
   unsigned long now = millis();
-  int yPos = 50;
-  int maxLimit = lastPacket.isEmergency ? 220 : 260;
+  // Wiersze o stałej wysokości 40 px (6 mieści się między paskiem tytułu a stopką):
+  //   +2..+16  znak stacji (Helvetica 14: litery 14 px nad linią bazową)
+  //   +22..+38 treść (Helvetica 12 z ogonkami liter)
+  //   +4..+36  ikona 32x32
+  //   +39      linia oddzielająca
+  const int ROW_H = 40;
+  int rowTop = 33;
+  int rowsBottom = lastPacket.isEmergency ? 233 : 274;   // pasek EMERGENCY / stopka
 
   for (int i = -1; i < MAX_HISTORY; i++) {
     APRSPacket *p = (i == -1) ? &lastPacket : &history[i];
     if (p->sourceCall.length() == 0) continue;
-    if (yPos > maxLimit) break;
+    if (rowTop + ROW_H - 1 > rowsBottom) break;
+    int yPos = rowTop + 16;
 
     bool icon = packetHasSymbol(*p);
-    if (icon) drawAprsSymbol(4, yPos - 15, p->symbolTable, p->symbolCode, false);
+    if (icon) drawAprsSymbol(4, rowTop + 4, p->symbolTable, p->symbolCode, false);
     int textX = icon ? 42 : 5;
     useFont(FONT_CALL);
     u8g2Fonts.setCursor(textX, yPos);
@@ -297,15 +304,15 @@ void drawListScreen() {
     u8g2Fonts.print(fitText(header, 390 - ageW - 8 - textX));
     printRightAligned(age, 395, yPos);
 
-    yPos += 18;
     useFont(FONT_LIGHT);
-    u8g2Fonts.setCursor(icon ? textX : 15, yPos);
+    u8g2Fonts.setCursor(icon ? textX : 15, rowTop + 34);
 
     String pld = packetDisplayText(*p);
     pld.replace('\n', ' ');
     u8g2Fonts.print(fitText(pld, 390 - (icon ? textX : 15)));
-    yPos += 20;
-    display.drawLine(5, yPos - 13, 395, yPos - 13, GxEPD_BLACK);
+
+    display.drawLine(5, rowTop + ROW_H - 1, 395, rowTop + ROW_H - 1, GxEPD_BLACK);
+    rowTop += ROW_H;
   }
 
   if (lastPacket.isEmergency) drawEmergencyBar(235);

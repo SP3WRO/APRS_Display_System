@@ -87,6 +87,15 @@ const char PAGE_SCRIPT[] PROGMEM = R"rawliteral(<script>
     else { dform.disabled = false; dformMsg.style.display = 'none'; }
   }
   function esc(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+  // Zmiana trybu ekranu działa od razu - bez przycisku Zapisz i bez restartu
+  function liveDisplay() {
+    var info = document.getElementById('dmode_res');
+    var body = new URLSearchParams({ dmode: document.getElementById('dmode').value, dform: document.getElementById('dform').value });
+    info.textContent = 'Zmieniam...';
+    fetch('/display', { method: 'POST', body: body }).then(r => r.json()).then(j => {
+      info.textContent = j.ok ? '✓ Ekran przełączony' : 'Błąd';
+    }).catch(() => { info.textContent = 'Błąd połączenia'; });
+  }
   function refresh() {
     fetch('/terminal').then(r => r.text()).then(t => {
       var ta = document.getElementById('term');
@@ -182,11 +191,13 @@ void handleRoot() {
   server.sendContent(chunk);
 
   chunk = "<form action=\"/save\" method=\"POST\">";
-  chunk += "<div class=\"box\"><h3>Wygląd i tryb pracy ekranu</h3><b>Tryb Wyświetlania:</b> <select id=\"dmode\" name=\"dmode\" onchange=\"toggle()\">";
+  chunk += "<div class=\"box\"><h3>Wygląd i tryb pracy ekranu</h3>";
+  chunk += "<div class=\"hint\" style=\"margin-top:0\">Tryb i format zmieniają się od razu po wybraniu z listy. <b id=\"dmode_res\" style=\"color:#28a745\"></b></div>";
+  chunk += "<b>Tryb Wyświetlania:</b> <select id=\"dmode\" name=\"dmode\" onchange=\"toggle(); liveDisplay()\">";
   chunk += optionTag(0, appConfig.displayMode, "Klasyczny (Kompas + 2 stacje)");
   chunk += optionTag(1, appConfig.displayMode, "Lista Stacji (Do 6 obiektów)");
   chunk += optionTag(2, appConfig.displayMode, "Statystyki (DX dnia, liczniki, wiadomości)");
-  chunk += "</select><br><b>Format Danych:</b> <select id=\"dform\" name=\"dform\">";
+  chunk += "</select><br><b>Format Danych:</b> <select id=\"dform\" name=\"dform\" onchange=\"liveDisplay()\">";
   chunk += optionTag(0, appConfig.dataFormat, "Zdekodowane (Współrzędne/Telemetria)");
   chunk += optionTag(1, appConfig.dataFormat, "Surowe (Raw Payload)");
   chunk += optionTag(2, appConfig.dataFormat, "Tylko Komentarz (Wyjątek: WX)");
@@ -250,7 +261,7 @@ void handleRoot() {
   chunk += textInput("PIN (domyślnie 1234 lub 0000):", "btpin", appConfig.btPin) + "</div>";
   server.sendContent(chunk);
 
-  server.sendContent("<input type=\"submit\" class=\"btn\" value=\"Zapisz i Zrestartuj\"></form>");
+  server.sendContent("<div class=\"hint\">Restart nastąpi tylko przy zmianie połączenia (złącze danych, WiFi, serwer, Bluetooth). Pozostałe ustawienia działają od razu.</div><input type=\"submit\" class=\"btn\" value=\"Zapisz\"></form>");
   server.sendContent("<div class=\"box\" style=\"margin-top:15px;\"><h3>Terminal na żywo</h3><textarea id=\"term\" readonly></textarea></div></body></html>");
   server.sendContent("");
 }
@@ -317,12 +328,84 @@ void handleSave() {
   else if (server.arg("webpass").length() > 0) prefs.putString("webpass", server.arg("webpass"));
   prefs.end();
 
-  String msg = "<html><head><meta charset=\"UTF-8\"><meta http-equiv=\"refresh\" content=\"15;url=/\"></head><body style=\"font-family:Arial\">Zapisano. Trwa restart...";
-  if (server.arg("appass").length() > 0 && server.arg("appass").length() < 8) msg += "<br>Hasło AP za krótkie (min. 8 znaków) - nie zmieniono.";
-  msg += "</body></html>";
-  server.send(200, "text/html", msg);
-  delay(1000);
-  ESP.restart();
+  // Wczytujemy zapisane ustawienia i porównujemy ze starymi: restart tylko wtedy,
+  // gdy zmieniło się połączenie (złącze, WiFi, serwer, Bluetooth)
+  Config old = appConfig;
+  String oldIsCall = effectiveIsCall();
+  String oldIsPass = effectiveIsPass();
+  String oldFilter = buildAprsIsFilter();
+  loadConfig();
+
+  bool needRestart =
+      old.currentMode != appConfig.currentMode ||
+      old.wifiSSID != appConfig.wifiSSID || old.wifiPass != appConfig.wifiPass ||
+      (appConfig.currentMode == MODE_KISS_UART && old.uartBaud != appConfig.uartBaud) ||
+      (appConfig.currentMode == MODE_KISS_TCP && (old.kissIP != appConfig.kissIP || old.kissPort != appConfig.kissPort)) ||
+      (appConfig.currentMode == MODE_APRS_IS && (old.isServer != appConfig.isServer || old.isPort != appConfig.isPort ||
+                                                 oldIsCall != effectiveIsCall() || oldIsPass != effectiveIsPass())) ||
+      (appConfig.currentMode == MODE_KISS_BT && (old.btAddress != appConfig.btAddress || old.btPin != appConfig.btPin));
+
+  String note = "";
+  if (server.arg("appass").length() > 0 && server.arg("appass").length() < 8) note += "<br>Hasło AP za krótkie (min. 8 znaków) - nie zmieniono.";
+
+  if (needRestart) {
+    server.send(200, "text/html", "<html><head><meta charset=\"UTF-8\"><meta http-equiv=\"refresh\" content=\"15;url=/\"></head>"
+                "<body style=\"font-family:Arial\">Zapisano. Zmieniło się połączenie - trwa restart..." + note + "</body></html>");
+    delay(1000);
+    ESP.restart();
+  }
+
+  applyLiveSettings(old, oldFilter);
+  if (apActive && old.apPass != appConfig.apPass) note += "<br>Nowe hasło sieci awaryjnej zadziała przy jej następnym uruchomieniu.";
+  server.send(200, "text/html", "<html><head><meta charset=\"UTF-8\"><meta http-equiv=\"refresh\" content=\"2;url=/\"></head>"
+              "<body style=\"font-family:Arial\">Zapisano - zmiany działają od razu, bez restartu." + note + "</body></html>");
+}
+
+// Zastosowanie ustawień, które nie wymagają restartu
+void applyLiveSettings(const Config &old, const String &oldFilter) {
+  if (old.displayMode != appConfig.displayMode || old.dataFormat != appConfig.dataFormat) {
+    forceFullRefresh = true;   // inny układ ekranu - pełne odświeżenie bez duchów poprzedniego
+  }
+  newDataToDisplay = true;
+
+  if (old.timezone != appConfig.timezone && timeConfigured) {
+    configTzTime(appConfig.timezone.c_str(), "pool.ntp.org", "time.google.com");
+  }
+
+  // Serwer APRS-IS przyjmuje zmianę filtra w trakcie połączenia
+  String filter = buildAprsIsFilter();
+  if (appConfig.currentMode == MODE_APRS_IS && filter != oldFilter && tcpClient.connected()) {
+    tcpClient.print("#filter " + filter + "\r\n");
+    addToTerminal("APRS-IS: nowy filtr " + filter);
+  }
+
+  // Włączony właśnie beacon - pierwszy za minutę, nie po pełnym interwale
+  if (appConfig.beaconEnabled && !old.beaconEnabled) {
+    lastBeaconTime = millis() - (unsigned long)appConfig.beaconInterval * 60000UL + 60000UL;
+  }
+
+  addToTerminal("> Ustawienia zastosowane bez restartu");
+}
+
+// Szybka zmiana trybu ekranu / formatu danych z panelu (bez przycisku Zapisz)
+void handleDisplayMode() {
+  if (!checkAuth()) return;
+  Config old = appConfig;
+  if (server.hasArg("dmode")) appConfig.displayMode = clampInt(server.arg("dmode").toInt(), 0, 2);
+  if (server.hasArg("dform")) appConfig.dataFormat = clampInt(server.arg("dform").toInt(), 0, 2);
+  if (appConfig.displayMode == DISPLAY_LIST) appConfig.dataFormat = 2;
+
+  prefs.begin("aprs", false);
+  prefs.putInt("dmode", appConfig.displayMode);
+  prefs.putInt("dform", appConfig.dataFormat);
+  prefs.end();
+
+  if (old.displayMode != appConfig.displayMode || old.dataFormat != appConfig.dataFormat) {
+    forceFullRefresh = true;
+    newDataToDisplay = true;
+    lastDisplayUpdate = 0;   // bez czekania na 3-sekundowy odstęp między odświeżeniami
+  }
+  server.send(200, "application/json", "{\"ok\":true}");
 }
 
 void handleStatus() {
@@ -384,6 +467,7 @@ void setupWebEndpoints() {
   server.on("/", HTTP_GET, handleRoot);
   server.on("/save", HTTP_POST, handleSave);
   server.on("/send", HTTP_POST, handleSend);
+  server.on("/display", HTTP_POST, handleDisplayMode);
   server.on("/api/status", HTTP_GET, handleStatus);
   server.on("/api/stations", HTTP_GET, handleStations);
   server.on("/map", HTTP_GET, []() {
