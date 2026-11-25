@@ -1,0 +1,39 @@
+name: Build i testy
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  parser-tests:
+    name: Testy parsera (PC)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Kompilacja testów
+        run: g++ -std=c++17 -Wall -Wextra -O1 -fsanitize=address,undefined -Itest/arduino_shim -I. test/test_parser.cpp aprs_parser.cpp -o test_parser
+      - name: Uruchomienie testów
+        timeout-minutes: 1
+        run: ./test_parser
+
+  firmware:
+    name: Firmware ESP32
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: arduino/setup-arduino-cli@v2
+      - name: Instalacja rdzenia ESP32 i bibliotek
+        run: |
+          arduino-cli core update-index --additional-urls https://espressif.github.io/arduino-esp32/package_esp32_index.json
+          arduino-cli core install esp32:esp32@3.3.11 --additional-urls https://espressif.github.io/arduino-esp32/package_esp32_index.json
+          arduino-cli lib install GxEPD2 "Adafruit GFX Library" U8g2_for_Adafruit_GFX
+      - name: Kompilacja
+        run: |
+          # Arduino wymaga, by folder nazywał się tak jak główny plik .ino
+          mkdir -p "$RUNNER_TEMP/APRS_Display_v2"
+          cp *.ino *.h *.cpp "$RUNNER_TEMP/APRS_Display_v2/"
+          arduino-cli compile --fqbn esp32:esp32:esp32:PartitionScheme=huge_app --output-dir build "$RUNNER_TEMP/APRS_Display_v2"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: firmware
+          path: build/*.bin
